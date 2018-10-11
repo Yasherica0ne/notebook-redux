@@ -149,7 +149,7 @@ class App extends React.Component {
                     }
                     case 'ON_TAGS_CHANGE': {
                         let note = GetNewNote(state);
-                        note.tags = action.text.split('#').filter(tag => tag);
+                        note.tags = action.text.split('#');
                         return note;
                     }
                     case 'CLEAR_NOTE': {
@@ -164,6 +164,7 @@ class App extends React.Component {
         this.store = createStore(this.Reducers);
 
         this.onNewNoteButtonClick = () => {
+            debugger;
             this.store.dispatch({
                 type: 'CLEAR_NOTE'
             });
