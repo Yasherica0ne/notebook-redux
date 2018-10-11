@@ -164,7 +164,6 @@ class App extends React.Component {
         this.store = createStore(this.Reducers);
 
         this.onNewNoteButtonClick = () => {
-            debugger;
             this.store.dispatch({
                 type: 'CLEAR_NOTE'
             });

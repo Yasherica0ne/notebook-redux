@@ -13,7 +13,6 @@ class Note extends React.Component {
     }
 
     render() {
-        debugger;
         const tags = this.props.note.tags;
 
         return (

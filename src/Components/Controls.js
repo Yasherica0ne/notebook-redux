@@ -11,13 +11,10 @@ class Controls extends React.Component {
 
         this.onSearchStringChange = (event) =>{
             this.props.onSearchStringChange(event.target.value);
-            // this.props.FilterNotes(this.props.searchString, this.props.filterType);
         }
 
         this.onFilterChange = (event) =>{
-            debugger;
             this.props.onFilterChange(event.target.value);
-            // this.props.FilterNotes(this.props.searchString, this.props.filterType);
         }
     }
 
