@@ -76,47 +76,36 @@ class App extends React.Component {
                     case 'ADD_NOTE': {
                         const newNotes = [...state];
                         newNotes.push(action.note);
+                        state = newNotes;
                         return newNotes;
-                    }
-                    case 'GET_NOTES_BY_FILTER': {
-                        debugger;
-                        const value = action.text;
-                        const filterType = action.filter;
-                        switch (filterType) {
-                            case `${FilterType.none}`:
-                                return this.state.notes;
-                            case `${FilterType.byTitle}`:
-                                return this.state.notes.filter(note => note.title.includes(value));
-                            case `${FilterType.byTag}`:
-                                return this.state.notes.filter(note => note.tags.filter(tag => tag.includes(value)).length !== 0);
-                        }
                     }
                     default:
                         return state;
                 }
             },
-            isRedactorVisible: (state = true, action) => {
+            isRedactorVisible: (state = false, action) => {
                 switch (action.type) {
-                    case 'TOGGLE_READCTOR_VISIBILITY':
-                        return !state;
+                    case 'ON_REDACTOR_VISIBILITY_CHANGE':
+                        return action.visibility;
                     default:
                         return state;
                 }
             },
             isRedactor: (state = true, action) => {
                 switch (action.type) {
-                    case 'TOGGLE_READCTOR':
-                        return !state;
+                    case 'CHANGE_REDACTOR':
+                        return action.view;
                     default:
                         return state;
                 }
             },
             notesCounter: (state = 2, action) => {
-                // switch (action.type) {
-                //     case 'GET_ID':
-                //         return state++;
-                //     default:
-                return ++state;
+                switch (action.type) {
+                    case 'INC_ID':
+                        return state + 1;
+                    default:
+                        return state;
+                }
 
             },
             isShortViewType: (state = true, action) => {
@@ -155,6 +144,9 @@ class App extends React.Component {
                         note.note = action.text;
                         return note;
                     }
+                    case 'ON_NOTE_SELECT': {
+                        return action.note;
+                    }
                     case 'ON_TAGS_CHANGE': {
                         let note = GetNewNote(state);
                         note.tags = action.text.split('#').filter(tag => tag);
@@ -169,133 +161,20 @@ class App extends React.Component {
             },
         })
 
-        this.store = createStore(this.Reducers)
+        this.store = createStore(this.Reducers);
 
-        this.addNote = (note) => {
-            this.store.dispatch({ type: 'ADD_NOTE', note: note })
-        }
-
-        this.state = {
-            notes: [
-                {
-                    id: 0,
-                    title: 'First note',
-                    note: '# Something important',
-                    date: '02.10.2018',
-                    tags: ['first', 'second', 'third']
-                },
-                {
-                    id: 1,
-                    title: 'Second note',
-                    note: '## Something important too',
-                    date: '03.10.2018',
-                    tags: ['first', 'second']
-                }
-            ],
-            isRedactorView: true,
-            notesCounter: 2,
-            isShortViewType: true,
-            filterType: FilterType.none + '',
-            searchString: '',
-            selectedNote: new Note()
-        };
-
-        this.onTitleChange = (e) => {
-            this.state.selectedNote.title = e.target.value;
-            this.setState({
-                selectedNote: this.state.selectedNote
-            })
-        }
-        this.onNoteChange = (e) => {
-            this.state.selectedNote.note = e.target.value;
-            this.setState({
-                selectedNote: this.state.selectedNote
-            })
-        }
-        this.onRedactorButtonClick = () => {
-            this.setState({
-                isRedactorView: true
-            })
-        }
-        this.onUserViewButtonClick = () => {
-            this.setState({
-                isRedactorView: false
-            })
-        }
-        this.onTagsChange = (e) => {
-            this.state.selectedNote.tags = e.target.value.split(' ');
-            this.setState({
-                selectedNote: this.state.selectedNote
-            })
-        }
-        this.onSearchStringChange = (e) => {
-            this.setState({
-                searchString: e.target.value
-            })
-        }
-        this.onSaveButtonClick = () => {
-            const note = this.state.selectedNote;
-            if (!note.title) return null;
-            if (note.id === -1) {
-                const notes = [...this.state.notes];
-                let note = this.state.selectedNote;
-                note.id = this.state.notesCounter;
-                note.date = ExtFunctions.getDate();
-                notes.push(note);
-                this.setState({
-                    notesCounter: ++this.state.notesCounter,
-                    notes: notes,
-                });
-            }
-            else {
-                let item = this.state.notes[note.id];
-                item.title = note.title;
-                item.note = note.note;
-                item.tags = note.tags;
-                this.setState({
-                    notes: this.state.notes,
-                });
-            }
-            //HideRedactor();
-        }
-        this.onFilterChange = (e) => {
-            this.setState({
-                filterType: e.target.value
-            });
-        }
-        this.onViewChange = (e) => {
-            this.setState({
-                isShortViewType: e.target.value
-            });
-        }
-        this.onItemChange = (e) => {
-            //ShowRedactor();
-            const item = this.state.notes[e.target.id];
-            this.setState({
-                selectedNote: item
-            });
-        }
         this.onNewNoteButtonClick = () => {
-            //ShowRedactor();
-            this.setState({
-                selectedNote: new Note()
+            debugger;
+            this.store.dispatch({
+                type: 'CLEAR_NOTE'
+            });
+            this.store.dispatch({
+                type: 'ON_REDACTOR_VISIBILITY_CHANGE',
+                visibility: true
             });
         }
     }
 
-    get notes() {
-        const value = this.state.searchString;
-        const filterType = this.state.filterType;
-
-        switch (filterType) {
-            case `${FilterType.none}`:
-                return this.state.notes;
-            case `${FilterType.byTitle}`:
-                return this.state.notes.filter(note => note.title.includes(value));
-            case `${FilterType.byTag}`:
-                return this.state.notes.filter(note => note.tags.indexOf(value) !== -1);
-        }
-    }
 
     render() {
         return (
@@ -305,7 +184,7 @@ class App extends React.Component {
                         <ControlsRX />
                         <NoteListRX />
                     </div>
-                    <div id={'RedactorBlock'} style={{
+                    <div style={{
                         marginLeft: '35vw',
                         position: 'absolute',
                         borderLeft: '1px solid gray',

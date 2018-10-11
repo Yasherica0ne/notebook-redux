@@ -11,35 +11,14 @@ class Controls extends React.Component {
 
         this.onSearchStringChange = (event) =>{
             this.props.onSearchStringChange(event.target.value);
-            this.props.FilterNotes(this.props.searchString, this.props.filterType);
+            
+            // this.props.FilterNotes(this.props.searchString, this.props.filterType);
         }
 
         this.onFilterChange = (event) =>{
+            debugger;
             this.props.onFilterChange(event.target.value);
             this.props.FilterNotes(this.props.searchString, this.props.filterType);
-        }
-
-        this.onSaveButtonClick = () => {
-            debugger;
-            let newNote = this.props.selectedNote;
-            if (!newNote.title) return null;
-            if (newNote.id === -1) {
-                newNote.id = this.props.notesCounter;
-                newNote.date = ExtFunctions.getDate();
-                //this.notes()
-                //this.notes.push(note);
-                this.props.AddNote(newNote);
-                this.props.ClearSelectedNote();
-            }
-            else {
-                // let item = this.state.notes[newNote.id];
-                // item.title = newNote.title;
-                // item.note = newNote.note;
-                // item.tags = newNote.tags;
-                // this.setState({
-                //     notes: this.state.notes,
-                // });
-            }
         }
     }
 

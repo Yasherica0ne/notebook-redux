@@ -3,27 +3,31 @@ import { connect } from "react-redux";
 
 class Note extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
+
+        this.noteSelector = () => {
+            this.props.showRedactor();
+            this.props.noteSelector(this.props.note);
+        }
     }
 
-
     render() {
-        const id = this.props.id;
-        const tags = this.props.tags;
+        debugger;
+        const tags = this.props.note.tags;
 
         return (
             this.props.isShortView ?
                 <React.Fragment>
                     <hr />
-                    <h3 style={{ cursor: 'pointer' }} id={id} onClick={this.props.noteSelector}>{this.props.title}</h3>
+                    <h3 style={{ cursor: 'pointer' }} onClick={this.noteSelector}>{this.props.note.title}</h3>
                 </React.Fragment>
                 :
                 <React.Fragment>
                     <div>
                         <hr />
-                        <h3 style={{ cursor: 'pointer' }} id={id} onClick={this.props.noteSelector}>{this.props.title}</h3>
-                        <p>Date: {this.props.date}</p>
+                        <h3 style={{ cursor: 'pointer' }} onClick={this.noteSelector}>{this.props.note.title}</h3>
+                        <p>Date: {this.props.note.date}</p>
                         <p>Tags:
                             {tags.map((tag) => (
                                 ` #${tag}`
@@ -35,18 +39,24 @@ class Note extends React.Component {
     }
 }
 
-function mapStateToProps(state) {
+
+
+function mapStateToProps(state, ownProps) {
     return {
-        isShortView: state.isShortViewType
+        isShortView: state.isShortViewType,
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        noteSelector: event => dispatch({
+        noteSelector: (item) => dispatch({
             type: 'ON_NOTE_SELECT',
-            viewTypeObject: event.target
-        })
+            note: item
+        }),
+        showRedactor: () => dispatch({
+            type: 'ON_REDACTOR_VISIBILITY_CHANGE',
+            visibility: true
+        }),
     }
 }
 

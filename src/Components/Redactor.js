@@ -9,13 +9,17 @@ class Redactor extends React.Component {
     constructor(props) {
         super(props);
 
+        this.onNewNoteButtonClick = () => {
+            this.props.showRedactor();
+            this.props.onNewNoteButtonClick();
+        }
 
         this.onSaveButtonClick = () => {
-            debugger;
             let newNote = this.props.selectedNote;
             if (!newNote.title) return null;
             if (newNote.id === -1) {
                 newNote.id = this.props.notesCounter;
+                this.props.onIdIncrement();
                 newNote.date = ExtFunctions.getDate();
                 //this.notes()
                 //this.notes.push(note);
@@ -23,20 +27,19 @@ class Redactor extends React.Component {
                 this.props.ClearSelectedNote();
             }
             else {
-                // let item = this.state.notes[newNote.id];
-                // item.title = newNote.title;
-                // item.note = newNote.note;
-                // item.tags = newNote.tags;
-                // this.setState({
-                //     notes: this.state.notes,
-                // });
+                let item = this.props.notes[newNote.id];
+                item.title = newNote.title;
+                item.note = newNote.note;
+                item.tags = newNote.tags;
             }
+            this.props.hideRedactor();
         }
     }
 
 
     render() {
         return (
+            this.props.isRedactorVisible &&
             <React.Fragment>
                 <input style={{ width: '30vw', marginBottom: '1vh' }} maxLength={50}
                     value={this.props.selectedNote.title}
@@ -58,7 +61,7 @@ class Redactor extends React.Component {
 
                 <input style={{ width: '35vw', marginBottom: '1vh' }} maxLength={50}
                     onChange={this.props.onTagsChange}
-                    value={this.props.selectedNote.tags.join(' ')}
+                    value={this.props.selectedNote.tags.join('#')}
                     placeholder={'#Tag1#Tag2#Tag3'} />
                 <br />
 
@@ -75,7 +78,9 @@ function mapStateToProps(state) {
         isRedactorVisible: state.isRedactorVisible,
         selectedNote: state.selectedNote,
         notes: state.notes,
-        notesCounter: state.notesCounter
+        notesCounter: state.notesCounter,
+        searchString: state.searchString,
+        filterType: state.filterType
     };
 }
 
@@ -85,19 +90,33 @@ function mapDispatchToProps(dispatch) {
             type: 'ON_SAVE_BUTTON_CLICK'
 
         }),
+        hideRedactor: () => dispatch({
+            type: 'ON_REDACTOR_VISIBILITY_CHANGE',
+            visibility: false
+        }),
+        showRedactor: () => dispatch({
+            type: 'ON_REDACTOR_VISIBILITY_CHANGE',
+            visibility: true
+        }),
+        onIdIncrement: () => dispatch({
+            type: 'INC_ID'
+
+        }),
         onTagsChange: event => dispatch({
             type: 'ON_TAGS_CHANGE',
             text: event.target.value
 
         }),
         onRedactorButtonClick: () => dispatch({
-            type: 'ON_REDACTOR_BUTTON_CLICK'
+            type: 'CHANGE_REDACTOR',
+            view: true
         }),
         ClearSelectedNote: () => dispatch({
             type: 'CLEAR_NOTE'
         }),
         onUserViewButtonClick: () => dispatch({
-            type: 'ON_USER_VIEW_BUTTON_CLICK'
+            type: 'CHANGE_REDACTOR',
+            view: false
         }),
         AddNote: (note) => dispatch({
             type: 'ADD_NOTE',
@@ -112,6 +131,14 @@ function mapDispatchToProps(dispatch) {
             type: 'ON_TITLE_CHANGE',
             text: event.target.value
 
+        }),
+        // onNewNoteButtonClick: () => dispatch({
+        //     type: 'CLEAR_NOTE'
+        // }),
+        FilterNotes: (text, filter) => dispatch({
+            type: 'GET_NOTES_BY_FILTER',
+            text: text,
+            filter: filter
         })
     }
 }
