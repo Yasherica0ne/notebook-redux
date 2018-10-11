@@ -11,14 +11,13 @@ class Controls extends React.Component {
 
         this.onSearchStringChange = (event) =>{
             this.props.onSearchStringChange(event.target.value);
-            
             // this.props.FilterNotes(this.props.searchString, this.props.filterType);
         }
 
         this.onFilterChange = (event) =>{
             debugger;
             this.props.onFilterChange(event.target.value);
-            this.props.FilterNotes(this.props.searchString, this.props.filterType);
+            // this.props.FilterNotes(this.props.searchString, this.props.filterType);
         }
     }
 
@@ -61,17 +60,12 @@ function mapDispatchToProps(dispatch) {
             filter: value
         }),
         onViewChange: event => dispatch({
-            type: 'VIEW_CHANGE',
+            type: 'VIEW_CHANGE',    
             view: event.target.value
         }),
         onSearchStringChange: (value) => dispatch({
             type: 'SEARCH_STRING_CHANGE',
             text: value
-        }),
-        FilterNotes: (text, filter) => dispatch({
-            type: 'GET_NOTES_BY_FILTER',
-            text: text,
-            filter: filter
         })
     }
 }

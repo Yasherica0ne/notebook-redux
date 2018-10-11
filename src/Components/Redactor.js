@@ -61,8 +61,9 @@ class Redactor extends React.Component {
 
                 <input style={{ width: '35vw', marginBottom: '1vh' }} maxLength={50}
                     onChange={this.props.onTagsChange}
-                    value={this.props.selectedNote.tags.join('#')}
-                    placeholder={'#Tag1#Tag2#Tag3'} />
+                    value={this.props.selectedNote.tags.join('#') }
+                        placeholder={'Tag1#Tag2#Tag3'}
+                    />
                 <br />
 
                 <button onClick={this.onSaveButtonClick}>Save</button>
@@ -76,7 +77,6 @@ function mapStateToProps(state) {
         selectedNote: state.selectedNote,
         isRedactor: state.isRedactor,
         isRedactorVisible: state.isRedactorVisible,
-        selectedNote: state.selectedNote,
         notes: state.notes,
         notesCounter: state.notesCounter,
         searchString: state.searchString,
